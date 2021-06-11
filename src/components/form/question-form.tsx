@@ -25,10 +25,10 @@ export const QuestionForm = ({ questionLists }: QuestionFormProps) => {
   } = useForm();
   const mutation = useMutation(postResponses);
   const onSubmit = (data: FormState) =>
-    mutation.mutate(convertToSubmitFormat(data));
+    mutation.mutate({ answers: convertToSubmitFormat(data) });
 
   if (mutation.isSuccess) {
-    <Redirect to="/success" />;
+    return <Redirect to="/success" />;
   }
 
   return (
