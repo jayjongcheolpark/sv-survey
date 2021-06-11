@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { LoginPage } from './pages/login-page';
+import { MainPage } from './pages/main-page';
+import { SuccessPage } from './pages/success-page';
+import './styles/app.css';
 
-function App() {
+const queryClient = new QueryClient();
+
+export const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/login">
+            <LoginPage />
+          </Route>
+          <Route path="/success">
+            <SuccessPage />
+          </Route>
+          <Route path="/" exact>
+            <MainPage />
+          </Route>
+        </Switch>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
-}
-
-export default App;
+};
