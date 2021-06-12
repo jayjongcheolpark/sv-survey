@@ -1,72 +1,88 @@
+import { useQuery } from 'react-query';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
-import { Redirect } from 'react-router';
-import { FormState } from '../../@types/question';
-import { postResponses } from '../../api/question';
+import { Link } from 'react-router-dom';
+import { getQuestions } from '../../api/question';
+import { Question, FormState, Answers } from '../../@types/question';
+import { QuestionInput } from '../input/question-input';
 import { convertToSubmitFormat } from '../../utils/format';
-import { SubGroupForm } from './sub-group-form';
-
-type QuestionList = {
-  id: number;
-  name: string;
-};
+import { ConfirmationView } from '../view/confirmation-view';
 
 type QuestionFormProps = {
-  questionLists: QuestionList[];
+  id: string;
+  categoryName: string;
 };
+export const QuestionForm = ({ id, categoryName }: QuestionFormProps) => {
+  const { data, isLoading } = useQuery(['question-list', id], () =>
+    getQuestions(id),
+  );
+  const [answers, setAnswers] = useState<Answers>([]);
 
-export const QuestionForm = ({ questionLists }: QuestionFormProps) => {
   const {
+    watch,
     register,
     control,
     setValue,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const mutation = useMutation(postResponses);
-  const onSubmit = (data: FormState) =>
-    mutation.mutate({ answers: convertToSubmitFormat(data) });
+  const onSubmit = (data: FormState) => {
+    setAnswers(convertToSubmitFormat(data));
+  };
 
-  if (mutation.isSuccess) {
-    return <Redirect to="/success" />;
+  if (isLoading) {
+    return null;
   }
-
   return (
-    <div
-      className="bg-gray-100 p-16 flex justify-center"
-      style={{ minHeight: '100vh' }}
-    >
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-8" style={{ maxWidth: '1000px' }}>
-          {questionLists.map(({ id, name }) => (
-            <div key={id} className="flex flex-col md:flex-row">
-              <div
-                className="font-semibold text-gray-900 pl-4 md:pl-0 pb-4 md:pb-0"
-                style={{ width: '200px' }}
-              >
-                {name}
-              </div>
-              <div className="flex-1 ml-4 bg-white rounded-md">
-                <SubGroupForm
-                  id={id}
-                  register={register}
-                  control={control}
-                  setValue={setValue}
-                  errors={errors}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="float-right mt-8">
-          <button
-            className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mt-8"
-            type="submit"
-          >
-            Submit
-          </button>
-        </div>
-      </form>
-    </div>
+    <>
+      <nav className="p-3 rounded w-full m-4">
+        <ol className="list-reset flex text-gray-500">
+          <li>
+            <Link
+              to="/"
+              className="text-blue-500 font-bold underline hover:text-blue-700"
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <span className="mx-2">/</span>
+          </li>
+          <li>{categoryName}</li>
+        </ol>
+      </nav>
+      <div className="pb-16 px-4 flex justify-center">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col gap-8">
+            {data?.data?.map((question: Question) => (
+              <QuestionInput
+                register={register}
+                key={question.id}
+                question={question}
+                control={control}
+                setValue={setValue}
+                errors={errors}
+              />
+            ))}
+          </div>
+          <div className="float-right mt-8">
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-8"
+              type="submit"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+      {answers && answers.length > 0 && (
+        <ConfirmationView
+          answers={answers}
+          watch={watch}
+          data={data?.data}
+          handleEdit={() => setAnswers([])}
+        />
+      )}
+    </>
   );
 };

@@ -11,7 +11,7 @@ export const getQuestionLists = () => {
   });
 };
 
-export const getQuestions = (id: number) => {
+export const getQuestions = (id: string) => {
   return axios.get('/api/questions/?list=' + id, {
     headers: {
       Authorization: `Token ${TOKEN}`,

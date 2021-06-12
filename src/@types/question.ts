@@ -28,3 +28,10 @@ export type AnswersParam = {
 export type FormState = {
   [key: string]: TextType;
 };
+
+export type QuestionList = {
+  id: number;
+  name: string;
+};
+
+export type QuestionLists = QuestionList[];

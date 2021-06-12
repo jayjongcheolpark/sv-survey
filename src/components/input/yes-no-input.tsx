@@ -30,7 +30,7 @@ export const YesNoInput = ({
                   value="yes"
                   onChange={(e) => field.onChange(e.target.value)}
                   checked={field.value === 'yes'}
-                  className="text-pink-500"
+                  className="text-blue-500"
                 />
                 <span className="ml-2 text-md text-gray-700">Yes</span>
               </label>
@@ -40,7 +40,7 @@ export const YesNoInput = ({
                   value="no"
                   onChange={(e) => field.onChange(e.target.value)}
                   checked={field.value === 'no'}
-                  className="text-pink-500"
+                  className="text-blue-500"
                 />
                 <span className="ml-2 text-md text-gray-700">No</span>
               </label>

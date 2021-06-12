@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   FieldValues,
   UseFormSetValue,
@@ -19,6 +20,9 @@ export const McInput = ({
   setValue,
   errors,
 }: McInputProps) => {
+  const [checked, setChecked] = useState(
+    Array.isArray(choice_list) ? Array.from(choice_list, () => false) : [],
+  );
   if (!choice_list || choice_list.length <= 0) {
     return null;
   }
@@ -36,13 +40,18 @@ export const McInput = ({
             return (
               <>
                 <div>
-                  {choice_list.map((value) => (
+                  {choice_list.map((value, index) => (
                     <div key={value}>
                       <label>
                         <input
                           type="checkbox"
-                          className="rounded text-pink-500"
+                          className="rounded text-blue-500"
                           onChange={(e) => {
+                            setChecked(
+                              Object.assign([], checked, {
+                                [index]: e.target.checked,
+                              }),
+                            );
                             if (e.target.checked) {
                               setValue(`question-${id}`, [
                                 ...(field.value || []),
@@ -56,7 +65,7 @@ export const McInput = ({
                               }
                             }
                           }}
-                          checked={field.value && field.value.includes(value)}
+                          checked={checked[index]}
                         />
                         <span className="ml-2 text-md text-gray-700">
                           {value}

@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
+import { Redirect } from 'react-router-dom';
 import { postLogin, LoginParms } from '../api/auth';
 
 export const LoginPage = () => {
@@ -8,6 +9,10 @@ export const LoginPage = () => {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data: LoginParms) => mutation.mutate(data);
+
+  if (mutation.isSuccess) {
+    return <Redirect to="/" />;
+  }
   return (
     <div
       className="w-full flex items-center justify-center"
